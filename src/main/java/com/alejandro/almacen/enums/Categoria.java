@@ -31,6 +31,6 @@ public enum Categoria {
                 return categoria;
         }
 
-        throw new DatoInvalidoException("No existe una categoria con la descripción" + descripcion);
+        throw new DatoInvalidoException("No existe una categoria con la descripción: " + descripcion);
     }
 }
