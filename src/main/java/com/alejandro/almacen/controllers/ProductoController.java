@@ -1,11 +1,14 @@
 package com.alejandro.almacen.controllers;
 
 
+import com.alejandro.almacen.docs.ProblemaDoc;
 import com.alejandro.almacen.dto.productos.ProductoRequest;
 import com.alejandro.almacen.dto.productos.ProductoResponse;
 import com.alejandro.almacen.services.productos.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,7 +24,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/productos")
 @RequiredArgsConstructor
-@Tag(name = "API Productos", description = "Gestión de inventario de productos")
+@Tag(name = "Productos", description = "Gestión del inventario de productos")
+// Errores que pueden ocurrir en cualquier endpoint:
+@ApiResponse(responseCode = "400", description = "Datos o parámetros inválidos",
+        content = @Content(mediaType = "application/problem+json",
+                schema = @Schema(implementation = ProblemaDoc.class)))
+@ApiResponse(responseCode = "500", description = "Error interno del servidor",
+        content = @Content(mediaType = "application/problem+json",
+                schema = @Schema(implementation = ProblemaDoc.class)))
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -49,8 +59,9 @@ public class ProductoController {
     @GetMapping("/{id}")
     @Operation(summary = "Obtener producto por ID")
     @ApiResponse(responseCode = "200", description = "Producto encontrdo")
-    @ApiResponse(responseCode = "404", description = "El producto no existe")
-
+    @ApiResponse(responseCode = "404", description = "El producto no existe",
+            content = @Content(mediaType = "application/problem+json",
+                    schema = @Schema(implementation = ProblemaDoc.class)))
     public ResponseEntity<ProductoResponse> obtenerPorId(
             @Parameter(description = "ID del producto", example = "1")
             @PathVariable @Positive(message = "El ID debe ser positivo") Long id
@@ -72,7 +83,9 @@ public class ProductoController {
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un producto existente")
     @ApiResponse(responseCode = "201", description = "Producto actualizado")
-    @ApiResponse(responseCode = "404", description = "El producto no existe")
+    @ApiResponse(responseCode = "409", description = "Conflicto con datos existentes",
+            content = @Content(mediaType = "application/problem+json",
+                    schema = @Schema(implementation = ProblemaDoc.class)))
     public ResponseEntity<ProductoResponse> actualizar(
 
             @Parameter(description = "ID del producto", example = "1")
@@ -87,7 +100,9 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un producto")
     @ApiResponse(responseCode = "201", description = "Producto eliminado")
-    @ApiResponse(responseCode = "404", description = "El producto no existe")
+    @ApiResponse(responseCode = "409", description = "El producto está en uso y no puede eliminarse",
+            content = @Content(mediaType = "application/problem+json",
+                    schema = @Schema(implementation = ProblemaDoc.class)))
     public ResponseEntity<ProductoResponse> eliminar(
             @Parameter(description = "ID del producto", example = "1")
             @PathVariable @Positive(message = "El ID deber ser positivo") Long id
