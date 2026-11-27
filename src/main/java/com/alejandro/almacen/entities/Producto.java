@@ -45,7 +45,7 @@ public class Producto {
                 "El nombre es requerido y debe tener entre 5 y 30 caracteres");
 
         if (categoria == null)
-            throw new DatoInvalidoException("Lacategoria es requerida");
+            throw new DatoInvalidoException("La categoria es requerida");
 
         ValoresNumericosUtils.validarBigDecimalPositivo(precio,
                 "El precio es requerido y debe ser positivo");
@@ -79,9 +79,8 @@ public class Producto {
                 cantidad,
                 "la cantidad debe ser positiva");
 
-        if (cantidad < this.cantidad)
-            throw new DatoInvalidoException("La cantidad debe" +
-                    "ser menor o igual a la cantidad actual");
+        if (cantidad > this.cantidad)
+            throw new DatoInvalidoException("La cantidad solicitada supera las existencias disponibles");
         this.cantidad -= cantidad;
     }
 

@@ -2,6 +2,8 @@ package com.alejandro.almacen.entities;
 
 
 import com.alejandro.almacen.exceptions.DatoInvalidoException;
+import com.alejandro.almacen.utils.ValoresNumericosUtils;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,5 +43,33 @@ public class DetalleVenta {
             throw new DatoInvalidoException("La venta es requerida");
 
         this.venta = venta;
+    }
+
+    public static void validarDatos(Integer cantidadProducto, BigDecimal precioProducto){
+
+        ValoresNumericosUtils.validarBigDecimalPositivo(precioProducto,
+                "El precio es requerido y debe ser positivo");
+
+        ValoresNumericosUtils.validarEnteroPositivo(cantidadProducto,
+                "La cantidad es requerida y debe ser positiva");
+    }
+
+    public static DetalleVenta crear(Producto producto, Integer cantidadProducto){
+        if (producto == null)
+            throw new DatoInvalidoException("El producto es requerido");
+
+        BigDecimal precioProducto = producto.getPrecio();
+        validarDatos(cantidadProducto, precioProducto);
+
+        return DetalleVenta.builder()
+                .producto(producto)
+                .cantidadProducto(cantidadProducto)
+                .precioProducto(precioProducto)
+                .build();
+
+    }
+
+    public BigDecimal calcularSubtotal(){
+        return  precioProducto.multiply(BigDecimal.valueOf(cantidadProducto));
     }
 }

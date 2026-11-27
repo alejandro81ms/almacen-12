@@ -26,19 +26,34 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final ProductoMapper productoMapper;
 
+
     @Override
+    @Transactional(readOnly = true)
     public List<ProductoResponse> listar(String nombre, String categoria, BigDecimal precioMin, BigDecimal precioMax) {
 
         log.info("Listando todos los productos...");
-        return productoRepository.findAll().stream()
-                .map(productoMapper::entidadAResponse).toList();
+
+        Categoria categoriaFiltro = (categoria == null || categoria.isBlank())
+                ? null
+                : Categoria.obtenerCategoriaPorDescripcion(categoria.trim());
+
+        String nombreFiltro = nombre == null || nombre.isBlank()
+                ? null
+                : nombre.trim();
+
+        return productoRepository.listar(nombreFiltro, categoriaFiltro, precioMin, precioMax)
+                .stream()
+                .map(productoMapper::entidadAResponse)
+                .toList();
     }
+
 
     @Override
     @Transactional(readOnly = true)
     public ProductoResponse obtenerPorId(Long id) {
         return productoMapper.entidadAResponse(obtenerProductoOException(id));
     }
+
 
     @Override
     public ProductoResponse registrar(ProductoRequest request) {
@@ -51,7 +66,7 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.saveAndFlush(producto);
 
         log.info("Nuevo producto {} registrado", producto.getNombre());
-        return null;
+        return productoMapper.entidadAResponse(producto);
     }
 
     @Override
@@ -91,7 +106,7 @@ public class ProductoServiceImpl implements ProductoService {
 
         return productoRepository.findById(id).orElseThrow(
                 () -> new RecursoNoEncontradoException(
-                        "Producto no encontrado con id:" + id));
+                        "Producto no encontrado con id: " + id));
 
     }
 }

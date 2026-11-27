@@ -58,7 +58,7 @@ public class ProductoController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener producto por ID")
-    @ApiResponse(responseCode = "200", description = "Producto encontrdo")
+    @ApiResponse(responseCode = "200", description = "Producto encontrado")
     @ApiResponse(responseCode = "404", description = "El producto no existe",
             content = @Content(mediaType = "application/problem+json",
                     schema = @Schema(implementation = ProblemaDoc.class)))
@@ -82,7 +82,7 @@ public class ProductoController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar un producto existente")
-    @ApiResponse(responseCode = "201", description = "Producto actualizado")
+    @ApiResponse(responseCode = "200", description = "Producto actualizado")
     @ApiResponse(responseCode = "409", description = "Conflicto con datos existentes",
             content = @Content(mediaType = "application/problem+json",
                     schema = @Schema(implementation = ProblemaDoc.class)))
@@ -99,7 +99,7 @@ public class ProductoController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un producto")
-    @ApiResponse(responseCode = "201", description = "Producto eliminado")
+    @ApiResponse(responseCode = "204", description = "Producto eliminado")
     @ApiResponse(responseCode = "409", description = "El producto está en uso y no puede eliminarse",
             content = @Content(mediaType = "application/problem+json",
                     schema = @Schema(implementation = ProblemaDoc.class)))
