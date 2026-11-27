@@ -1,6 +1,7 @@
 package com.alejandro.almacen.services.sucursales;
 
 
+import com.alejandro.almacen.dto.reportes.ReporteVentasSucursalResponse;
 import com.alejandro.almacen.dto.sucursales.SucursalRequest;
 import com.alejandro.almacen.dto.sucursales.SucursalResponse;
 import com.alejandro.almacen.entities.Sucursal;
@@ -19,11 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-
 public class SucursalServiceImpl implements SucursalService{
 
     private final SucursalRepository sucursalRepository;
-
     private final SucursalMapper sucursalMapper;
 
     @Override
@@ -33,6 +32,13 @@ public class SucursalServiceImpl implements SucursalService{
 
         return sucursalRepository.findAll().stream()
                 .map(sucursalMapper::entidadAResponse).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReporteVentasSucursalResponse> obtenerReporteVentasPorSucursal() {
+        log.info("Consultando el reporte de ventas por sucursal");
+        return sucursalRepository.obtenerReporteVentasPorSucursal();
     }
 
     @Override
@@ -92,7 +98,7 @@ public class SucursalServiceImpl implements SucursalService{
 
 
     private void validarDatosUnicos(SucursalRequest request){
-        log.info("Validando nombre punico...");
+        log.info("Validando nombre único...");
 
         if (sucursalRepository.existsByNombreIgnoreCase(request.nombre().trim()))
             throw new ConflictoException("Ya existe una sucursal con el nombre de:" + request.nombre());

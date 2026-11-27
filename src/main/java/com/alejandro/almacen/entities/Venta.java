@@ -6,6 +6,7 @@ import com.alejandro.almacen.exceptions.DatoInvalidoException;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,35 @@ public class Venta {
 
     }
 
+    public static void validarDatos(LocalDate fecha, Sucursal sucursal){
 
+        if (fecha == null)
+            throw new DatoInvalidoException("La fecha es requerida");
+
+        if (sucursal == null)
+            throw new DatoInvalidoException("La sucursal es requerida");
+    }
+
+    public static Venta crear(
+            LocalDate fecha, Sucursal sucursal
+    ){
+        validarDatos(fecha, sucursal);
+        return Venta.builder()
+                .fecha(fecha)
+                .sucursal(sucursal)
+                .estadoVenta(EstadoVenta.REGISTRADA)
+                .detalleVentas(new ArrayList<>())
+                .build();
+    }
+
+    public BigDecimal calcularTotal(){
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (DetalleVenta detalle : detalleVentas){
+            total = total.add(detalle.calcularSubtotal());
+        }
+        return  total;
+    }
 
 }
 

@@ -3,6 +3,7 @@ package com.alejandro.almacen.controllers;
 
 import com.alejandro.almacen.docs.ProblemaDoc;
 import com.alejandro.almacen.dto.productos.ProductoResponse;
+import com.alejandro.almacen.dto.reportes.ReporteVentasSucursalResponse;
 import com.alejandro.almacen.dto.sucursales.SucursalRequest;
 import com.alejandro.almacen.dto.sucursales.SucursalResponse;
 import com.alejandro.almacen.services.sucursales.SucursalService;
@@ -42,6 +43,14 @@ public class SucursalController {
     @ApiResponse(responseCode = "200", description = "Listado obtenido")
     public ResponseEntity<List<SucursalResponse>> listar() {
         return ResponseEntity.ok(sucursalService.listar());
+    }
+
+
+    @GetMapping("/reporte-ventas")
+    @Operation(summary = "Consultar el total facturado y las unidades vendidas por sucursal")
+    @ApiResponse(responseCode = "200", description = "Reporte de ventas obtenido")
+    public ResponseEntity<List<ReporteVentasSucursalResponse>> obtenerReporteVentasPorSucursal(){
+        return ResponseEntity.ok(sucursalService.obtenerReporteVentasPorSucursal());
     }
 
     @GetMapping("/{id}")
